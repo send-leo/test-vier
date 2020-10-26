@@ -28,7 +28,7 @@ class CallIncoming extends React.Component {
 
         return (
             <div id='CallIncoming'>
-                {util.makeTextTable(info)}
+                {util.makeTable(info)}
                 <p><button onClick={this.onAccept}>accept</button></p>
                 <p><button onClick={this.onReject}>reject</button></p>
             </div>

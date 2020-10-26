@@ -5,16 +5,32 @@ class CallCtx {
 
     constructor() {
         this.call = null;
+
         this.remoteUser = null;
         this.page = 'CallDial';
+        this.isLocalAudioEnabled = false;
+        this.isLocalVideoEnabled = false;
+        this.isRemoteAudioEnabled = false;
+        this.isRemoteVideoEnabled = false;
 
         makeObservable(this, {
+            // observable
             remoteUser: observable,
             page: observable,
+            isLocalAudioEnabled: observable,
+            isLocalVideoEnabled: observable,
+            isRemoteAudioEnabled: observable,
+            isRemoteVideoEnabled: observable,
+
+            // action
             dial: action,
             resetIncoming: action,
             endPage: action,
             onEstablished: action,
+            updateLocalAudioSettings: action,
+            updateLocalVideoSettings: action,
+            updateRemoteAudioSettings: action,
+            updateRemoteVideoSettings: action,
         })
     }
 
@@ -86,16 +102,58 @@ class CallCtx {
             this.endPage();
         };
         this.call.onRemoteAudioSettingsChanged = (call) => {
-            console.error('call:onRemoteAudioSettingsChanged');
+            console.debug('call:onRemoteAudioSettingsChanged');
+            this.updateRemoteAudioSettings();
         };
         this.call.onRemoteVideoSettingsChanged = (call) => {
-            console.error('call:onRemoteVideoSettingsChanged');
+            console.debug('call:onRemoteVideoSettingsChanged');
+            this.updateRemoteVideoSettings();
         };
+
+        this.updateLocalAudioSettings();
+        this.updateLocalVideoSettings();
+        this.updateRemoteAudioSettings();
+        this.updateRemoteVideoSettings();
+    }
+
+    setMicrophone(bOff) {
+        if (bOff) {
+            console.debug('muteMicrophone');
+            this.call.muteMicrophone();
+        }
+        else {
+            console.debug('unmuteMicrophone');
+            this.call.unmuteMicrophone();
+        }
+        this.updateLocalAudioSettings();
+    }
+    setCamera(bOff) {
+        if (bOff) {
+            console.debug('stopVideo');
+            this.call.stopVideo();
+        }
+        else {
+            console.debug('startVideo');
+            this.call.startVideo();
+        }
+        this.updateLocalVideoSettings();
     }
 
     onEstablished = (call) => {
         console.debug('call:onEstablished');
         this.page = 'CallActive';
+    };
+    updateLocalAudioSettings() {
+        this.isLocalAudioEnabled = this.call.isLocalAudioEnabled;
+    };
+    updateLocalVideoSettings() {
+        this.isLocalVideoEnabled = this.call.isLocalVideoEnabled;
+    };
+    updateRemoteAudioSettings() {
+        this.isRemoteAudioEnabled = this.call.isRemoteAudioEnabled;
+    };
+    updateRemoteVideoSettings() {
+        this.isRemoteVideoEnabled = this.call.isRemoteVideoEnabled;
     };
 
     end() {
@@ -105,7 +163,7 @@ class CallCtx {
     makeInfo() {
         const info = {
             callId: this.call.callId,
-            isVideoCall: this.call.isVideoCall,
+            isVideoCall: `${this.call.isVideoCall}`,
         };
 
         const remoteUser = this.remoteUser;

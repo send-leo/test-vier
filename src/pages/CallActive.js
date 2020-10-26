@@ -1,4 +1,5 @@
 import React from 'react';
+import { observer } from 'mobx-react'
 import util from 'lib/util';
 
 class CallActive extends React.Component {
@@ -16,9 +17,21 @@ class CallActive extends React.Component {
         const callCtx = this.props.callCtx;
         const info = callCtx.makeInfo();
 
+        const call = callCtx.call;
+        const isVideoCall = call.isVideoCall;
+
+        const makeAudioButton = status =>
+            <button onClick={e => this.props.callCtx.setMicrophone(status)}>{`${status}`}</button>;
+        const makeVideoButton = status =>
+            <button onClick={e => this.props.callCtx.setCamera(status)}>{`${status}`}</button>;
+
         let table = null;
-        const isVideoCall = callCtx.call.isVideoCall;
         if (isVideoCall) {
+            info.isLocalAudioEnabled = makeAudioButton(callCtx.isLocalAudioEnabled);
+            info.isLocalVideoEnabled = makeVideoButton(callCtx.isLocalVideoEnabled);
+            info.isRemoteAudioEnabled = `${callCtx.isRemoteAudioEnabled}`;
+            info.isRemoteVideoEnabled = `${callCtx.isRemoteVideoEnabled}`;
+
             const local_video_style = {
                 margin: '10px',
                 border: '4px dashed #bcbcbc',
@@ -46,15 +59,20 @@ class CallActive extends React.Component {
 
             table = util.makeTable(elements);
         }
+        else {
+            info.isLocalAudioEnabled = makeAudioButton(callCtx.isLocalAudioEnabled);
+            info.isRemoteAudioEnabled = `${callCtx.isRemoteAudioEnabled}`;
+        }
+
+        info['=>'] = <button onClick={e => callCtx.end()}>end</button>;
 
         return (
             <div id='CallActive'>
-                {util.makeTextTable(info)}
+                {util.makeTable(info)}
                 {table}
-                <p><button onClick={e => callCtx.end()}>end</button></p>
             </div>
         );
     }
 };
 
-export default CallActive;
+export default observer(CallActive);

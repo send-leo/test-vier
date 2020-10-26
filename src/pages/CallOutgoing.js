@@ -19,7 +19,7 @@ class CallOutgoing extends React.Component {
 
         return (
             <div id='CallOutgoing'>
-                {util.makeTextTable(info)}
+                {util.makeTable(info)}
                 <p><button onClick={this.onCancel}>cancel</button></p>
             </div>
         );
