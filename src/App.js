@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import AppCtx from 'AppCtx';
+import { observer } from 'mobx-react'
 
-export default App;
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
+import Login from 'pages/Login.js';
+import Main from 'pages/Main.js';
+
+class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.appCtx = new AppCtx();
+    this.pages = {
+      'Login': (<Login appCtx={this.appCtx} />),
+      'Main': (<Main appCtx={this.appCtx} />),
+    }
+  }
+
+  render() {
+    const appCtx = this.appCtx;
+    const page = this.pages[appCtx.page];
+
+    return (
+      <div id="App">
+        <BlockUi tag="div" blocking={appCtx.blocking}>
+          {page}
+        </BlockUi>
+      </div>
+    );
+  }
+};
+
+export default observer(App);
