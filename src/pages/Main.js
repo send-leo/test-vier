@@ -7,6 +7,7 @@ import CallActive from './CallActive.js';
 import CallOutgoing from './CallOutgoing.js';
 import CallIncoming from './CallIncoming.js';
 import CallEnd from './CallEnd.js';
+import CallHistory from './CallHistory.js';
 import SendBirdCall from "sendbird-calls";
 
 class Main extends React.Component {
@@ -63,6 +64,9 @@ class Main extends React.Component {
                 </div>
                 <div>
                     {this.pages[pageName]}
+                </div>
+                <div>
+                    <CallHistory appCtx={this.props.appCtx} />
                 </div>
             </div>
         );

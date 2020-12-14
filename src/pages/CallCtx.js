@@ -3,7 +3,8 @@ import SendBirdCall from "sendbird-calls";
 
 class CallCtx {
 
-    constructor() {
+    constructor(appCtx) {
+        this.appCtx = appCtx;
         this.call = null;
 
         this.remoteUser = null;
@@ -81,6 +82,7 @@ class CallCtx {
 
     endPage() {
         this.page = 'CallEnd';
+        this.appCtx.updateHistory();
     }
 
     clear() {
